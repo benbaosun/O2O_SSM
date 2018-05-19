@@ -47,12 +47,15 @@ public class ImageUtil {
         // 生成目标图片文件
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
 
+        // 替换空格
+        basePath = basePath.replace("%20", " ");
+
         try {
             // 生成带水印的图片
             Thumbnails.of(thumbnail)
                     .size(200, 200)
                     .watermark(Positions.BOTTOM_RIGHT,
-                            ImageIO.read(new File(basePath + "/watermark.jpg")), 0.25f)
+                            ImageIO.read(new File(basePath + "watermark.jpg")), 0.25f)
                     .outputQuality(0.8f)
                     .toFile(dest);
         } catch (IOException e) {

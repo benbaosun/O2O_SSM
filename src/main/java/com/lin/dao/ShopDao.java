@@ -16,4 +16,11 @@ public interface ShopDao {
      */
     int insertShop(Shop shop);
 
+    /**
+     * 更新店铺信息
+     * @param shop 店铺对象
+     * @return 受影响行数
+     */
+    int updateShop(Shop shop);
+
 }

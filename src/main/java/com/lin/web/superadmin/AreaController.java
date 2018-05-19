@@ -3,6 +3,8 @@ package com.lin.web.superadmin;
 
 import com.lin.entity.Area;
 import com.lin.service.AreaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,9 @@ import java.util.Map;
 @RequestMapping("/superadmin") //路径映射
 public class AreaController {
 
+    /*** 日志记录器 ***/
+    private Logger logger = LoggerFactory.getLogger(AreaController.class);
+
     @Autowired
     private AreaService areaService;
 
@@ -33,6 +38,10 @@ public class AreaController {
     @RequestMapping(value = "/listarea", method = RequestMethod.GET)
     @ResponseBody // 将结果转换成json
     private Map<String, Object> listArea() {
+        logger.info("===start===");
+
+        // 方法执行开始时间
+        long startTime = System.currentTimeMillis();
         // 存放结果信息的Map
         Map<String, Object> modelMap = new HashMap<>();
         // 区域实体列表
@@ -51,6 +60,11 @@ public class AreaController {
             modelMap.put("errMsg", e.toString());
         }
 
+        logger.error("test error!");
+        // 方法执行结束时间
+        long endTime = System.currentTimeMillis();
+        logger.debug("costTime[{}]ms", endTime - startTime);
+        logger.info("===end===");
         return modelMap;
     }
 

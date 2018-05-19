@@ -35,7 +35,7 @@ public class ImageUtil {
      * @param targetAddr 上传目标地址
      * @return 生成后的缩略图地址
      */
-    public static String generateThumbnail(CommonsMultipartFile thumbnail, String targetAddr) {
+    public static String generateThumbnail(File thumbnail, String targetAddr) {
         // 生成随机文件名
         String realFileName = getRandomFileName();
         // 获取文件后缀名
@@ -49,7 +49,7 @@ public class ImageUtil {
 
         try {
             // 生成带水印的图片
-            Thumbnails.of(thumbnail.getInputStream())
+            Thumbnails.of(thumbnail)
                     .size(200, 200)
                     .watermark(Positions.BOTTOM_RIGHT,
                             ImageIO.read(new File(basePath + "/watermark.jpg")), 0.25f)
@@ -81,9 +81,9 @@ public class ImageUtil {
      * @param file 用户上传的文件流
      * @return 文件拓展名
      */
-    private static String getFileExtension(CommonsMultipartFile file) {
+    private static String getFileExtension(File file) {
         // 获取文件名
-        String filename = file.getOriginalFilename();
+        String filename = file.getName();
         // 截取拓展名
         return filename.substring(filename.indexOf("."));
     }

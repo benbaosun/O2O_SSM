@@ -12,7 +12,7 @@ public class PathUtil {
     private static String separator = System.getProperty("file.separator");
 
     /*** Windows操作系统 ***/
-    public static final String WIN_SYSTEM = "win";
+    private static final String WIN_SYSTEM = "win";
 
     /**
      * 获取图片根目录

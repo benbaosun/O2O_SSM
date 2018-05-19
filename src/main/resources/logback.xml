@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--定义参数常量-->
+    <!--TRACE < DEBUG < INFO < WARN < ERROR logger级别大小排序-->
+    <property name="log.level" value="debug"/>
+    <!--最大保留历史天数-->
+    <property name="log.maxHistory" value="30"/>
+    <!--日志文件存储路径-->
+    <property name="log.filePath" value="${catalina.base}/logs/webapps"/>
+    <!--日志格式-->
+    <property name="log.pattern"
+              value="%d{yyyy-MM-dd HH:mm:ss:SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+    <!--设置在控制台输出信息-->
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--输出格式-->
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!--DEBUG级别输出设置-->
+    <appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--文件路径-->
+        <file>${log.filePath}/debug.log</file>
+        <!--日志滚动策略（按天滚动）-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件名称-->
+            <fileNamePattern>
+                ${log.filePath}/debug/debug.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+            <!--文件最大保存天数-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!--输出格式-->
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!--设置过滤器，只保留DEBUG相关信息-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMissmatch>DENY</onMissmatch>
+        </filter>
+    </appender>
+
+    <!--INFO级别输出设置-->
+    <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--文件路径-->
+        <file>${log.filePath}/info.log</file>
+        <!--日志滚动策略（按天滚动）-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件名称-->
+            <fileNamePattern>
+                ${log.filePath}/info/info.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+            <!--文件最大保存天数-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!--输出格式-->
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!--设置过滤器，只保留INFO相关信息-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMissmatch>DENY</onMissmatch>
+        </filter>
+    </appender>
+
+    <!--ERROR级别输出设置-->
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--文件路径-->
+        <file>${log.filePath}/error.log</file>
+        <!--日志滚动策略（按天滚动）-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件名称-->
+            <fileNamePattern>
+                ${log.filePath}/error/error.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+            <!--文件最大保存天数-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!--输出格式-->
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!--设置过滤器，只保留ERROR相关信息-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMissmatch>DENY</onMissmatch>
+        </filter>
+    </appender>
+
+    <!--配置日志记录的路径和级别（继承自root记录器）-->
+    <logger name="com.lin" level="${log.level}" additivity="true">
+        <!--记录debug输出级别-->
+        <appender-ref ref="debugAppender"/>
+        <!--记录info输出级别-->
+        <appender-ref ref="infoAppender"/>
+        <!--记录error输出级别-->
+        <appender-ref ref="errorAppender"/>
+    </logger>
+
+    <!--根日志记录器-->
+    <root level="info">
+        <!--记录控制台输出级别-->
+        <appender-ref ref="consoleAppender"/>
+    </root>
+</configuration>

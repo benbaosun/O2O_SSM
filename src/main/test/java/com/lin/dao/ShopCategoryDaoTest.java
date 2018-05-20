@@ -1,0 +1,36 @@
+package com.lin.dao;
+
+import com.lin.BaseTest;
+import com.lin.entity.Area;
+import com.lin.entity.PersonInfo;
+import com.lin.entity.Shop;
+import com.lin.entity.ShopCategory;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
+/**
+ * @author lkmc2
+ * @date 2018/5/20.
+ * 店铺分类查询测试
+ */
+
+public class ShopCategoryDaoTest extends BaseTest {
+
+    @Autowired
+    private ShopCategoryDao shopCategoryDao;
+
+    /**
+     * 测试查询符合条件的店铺分类
+     */
+    @Test
+    public void testQueryShopCategory() {
+        List<ShopCategory> shopCategoryList = shopCategoryDao.queryShopCategory(new ShopCategory());
+        assertEquals(1, shopCategoryList.size());
+    }
+
+}

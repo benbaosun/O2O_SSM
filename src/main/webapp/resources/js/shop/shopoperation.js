@@ -1,7 +1,7 @@
 $(function () {
-    var initUrl = '/o2o_ssm/shop/getshopinitinfo';
+    var initUrl = '/o2o_ssm/shopadmin/getshopinitinfo';
     var registerShopUrl = '/o2o_ssm/shopadmin/registershop';
-    alert(initUrl);
+    // alert(initUrl);
     getShopInitInfo();
     // 获取店铺初始化信息
     function getShopInitInfo() {

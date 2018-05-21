@@ -2,9 +2,13 @@ package com.lin.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lin.dto.ShopExecution;
+import com.lin.entity.Area;
 import com.lin.entity.PersonInfo;
 import com.lin.entity.Shop;
+import com.lin.entity.ShopCategory;
 import com.lin.enums.ShopStateEnum;
+import com.lin.service.AreaService;
+import com.lin.service.ShopCategoryService;
 import com.lin.service.ShopService;
 import com.lin.utils.CodeUtil;
 import com.lin.utils.HttpServletRequestUtil;
@@ -22,7 +26,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +43,37 @@ public class ShopManagementController {
 
     @Autowired
     private ShopService shopService;
+
+    @Autowired
+    private ShopCategoryService shopCategoryService;
+
+    @Autowired
+    private AreaService areaService;
+
+    @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getShopInitInfo() {
+        Map<String, Object> modelMap = new HashMap<>();
+        // 店铺分类列表
+        List<ShopCategory> shopCategoryList;
+        // 区域分类列表
+        List<Area> areaList;
+
+        try {
+            // 获取店铺分类列表
+            shopCategoryList = shopCategoryService.getShopCategoryList(new ShopCategory());
+            // 获取区域分类列表
+            areaList = areaService.getAreaList();
+            modelMap.put("shopCategoryList", shopCategoryList);
+            modelMap.put("areaList", areaList);
+            modelMap.put("success", true);
+        } catch (Exception e) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
+            return modelMap;
+        }
+        return modelMap;
+    }
 
     /**
      * 注册店铺

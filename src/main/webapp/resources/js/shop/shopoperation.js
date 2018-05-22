@@ -13,7 +13,7 @@ $(function () {
                     tempHtml += '<option data-id="' + item.shopCategoryId + '">'
                         + item.shopCategoryName + '</option>';
                 });
-                data.areaList.map(function (value, index) {
+                data.areaList.map(function (item, index) {
                     tempAreaHtml += '<option data-id="' + item.areaId + '">'
                         + item.areaName + '</option>';
                 });
@@ -30,7 +30,7 @@ $(function () {
             shop.shopAddr = $('#shop-addr').val();
             shop.phone = $('#shop-phone').val();
             shop.shopDesc = $('#shop-desc').val();
-            shop.shopCategoryId = {
+            shop.shopCategory = {
                 shopCategoryId: $('#shop-category').find('option').not(function () {
                     return !this.selected;
                 }).data('id')
@@ -43,7 +43,7 @@ $(function () {
             var shopImg = $('#shop-img')[0].files[0];
             var formData = new FormData();
             formData.append('shopImg', shopImg);
-            formData.append('shopStr', JSON.stringify(shopImg));
+            formData.append('shopStr', JSON.stringify(shop));
             var verifyCodeActual = $('#j_captcha').val();
             if (!verifyCodeActual) {
                 $.toast('请输入验证码！');

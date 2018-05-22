@@ -1,16 +1,18 @@
 package com.lin.service.impl;
 
+
 import com.lin.dao.ShopDao;
 import com.lin.dto.ShopExecution;
 import com.lin.entity.Shop;
 import com.lin.enums.ShopStateEnum;
 import com.lin.exceptions.ShopOperationException;
 import com.lin.service.ShopService;
+import com.lin.utils.FileUtil;
 import com.lin.utils.ImageUtil;
-import com.lin.utils.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.io.File;
 import java.util.Date;
@@ -20,6 +22,7 @@ import java.util.Date;
  * @date 2018/5/19.
  * 店铺服务实现类
  */
+
 @Service
 public class ShopServiceImpl implements ShopService {
 
@@ -75,7 +78,7 @@ public class ShopServiceImpl implements ShopService {
      */
     private void addShopImg(Shop shop, File shopImg) {
         // 获取shop图片目录的相对值路径
-        String dest = PathUtil.getShopImagePath(shop.getShopId());
+        String dest = FileUtil.getShopImagePath(shop.getShopId());
         // 店铺图片地址
         String shopImgAddr = ImageUtil.generateThumbnail(shopImg, dest);
         // 设置店铺图片

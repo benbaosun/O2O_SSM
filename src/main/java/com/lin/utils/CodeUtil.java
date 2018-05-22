@@ -25,8 +25,9 @@ public class CodeUtil {
         String verifyCodeActual = HttpServletRequestUtil.getString(request, "verifyCodeActual");
 
         // 用户输入的验证码非空，并且等于正确的验证码才为真
-        return StringUtils.isNotEmpty(verifyCodeActual)
-                && verifyCodeActual.equals(verifyCodeExpected);
+        return StringUtils.isNotEmpty(verifyCodeExpected)
+                && StringUtils.isNotEmpty(verifyCodeActual)
+                && verifyCodeActual.toLowerCase().equals(verifyCodeExpected.toLowerCase());
     }
 
 }

@@ -24,9 +24,11 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +85,7 @@ public class ShopManagementController {
     @RequestMapping(value = "/registershop", method = RequestMethod.POST)
     @ResponseBody
     private Map<String, Object> registerShop(HttpServletRequest request) {
-        Map<String, Object> modelMap = new HashMap<>();
+        Map<String, Object> modelMap = new HashMap<>(5);
         // 验证码检查
         if (!CodeUtil.checkVerifyCode(request)) {
             modelMap.put("success", false);
@@ -107,14 +109,14 @@ public class ShopManagementController {
         // 店铺图片文件流
         CommonsMultipartFile shopImg = null;
         // 文件流解析器
-        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
                 request.getSession().getServletContext());
 
         // 请求中包含文件
-        if (commonsMultipartResolver.isMultipart(request)) {
-            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+        if (multipartResolver.isMultipart(request)) {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             // 获取页面上传的图片
-            shopImg = (CommonsMultipartFile) multipartHttpServletRequest.getFile("shopImg");
+            shopImg = (CommonsMultipartFile) multipartRequest.getFile("shopImg");
         } else {
             modelMap.put("success", false);
             modelMap.put("errMsg", "上传图片不能为空");
@@ -128,7 +130,7 @@ public class ShopManagementController {
             owner.setUserId(1L);
             shop.setOwner(owner);
             // 店铺图片目标文件地址
-            File shopImgFile = new File(PathUtil.getImgBasePath() + ImageUtil.getRandomFileName());
+            File shopImgFile = new File(PathUtil.getImgBasePath() + ImageUtil.getRandomFileName() + ".jpg");
             try {
                 // 创建新文件
                 shopImgFile.createNewFile();
@@ -173,29 +175,23 @@ public class ShopManagementController {
      * @param file 目标文件对象
      */
     private static void inputStreamToFile(InputStream ins, File file) {
-        try {
-            // 复制输入流到目标文件
-            Files.copy(ins, file.toPath());
-        } catch (IOException e) {
+        try(FileOutputStream os = new FileOutputStream(file)) {
+
+            int byteRead = 0;
+            byte[] buffer = new byte[1024];
+            while ((byteRead = ins.read(buffer)) != -1) {
+                os.write(buffer, 0, byteRead);
+            }
+        } catch (Exception e) {
             throw new RuntimeException("调用inputStreamToFile产生异常：" + e.getMessage());
+        } finally {
+            if (ins != null) {
+                try {
+                    ins.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-//        try(FileOutputStream os = new FileOutputStream(file)) {
-//
-//            int byteRead = 0;
-//            byte[] buffer = new byte[1024];
-//            while ((byteRead = ins.read(buffer)) != -1) {
-//                os.write(buffer, 0, byteRead);
-//            }
-//        } catch (Exception e) {
-//            throw new RuntimeException("调用inputStreamToFile产生异常：" + e.getMessage());
-//        } finally {
-//            if (ins != null) {
-//                try {
-//                    ins.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 }

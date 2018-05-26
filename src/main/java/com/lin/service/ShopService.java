@@ -16,11 +16,13 @@ import java.io.InputStream;
 public interface ShopService {
     /**
      * 添加店铺
-     * @param shop 店铺对象
-     * @param shopImg 店铺图片
-     * @return 店铺传输对象
+     * @param shop 店铺
+     * @param shopImgInputStream 图片流
+     * @param fileName 图片名
+     * @return 商店传输对象
+     * @throws ShopOperationException 店铺操作异常
      */
-    ShopExecution addShop(Shop shop, File shopImg);
+    ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException;
 
 
     /**

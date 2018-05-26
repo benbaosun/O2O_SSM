@@ -35,7 +35,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public ShopExecution addShop(Shop shop, File shopImg) {
+    public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException {
         // 空值判断
         if (shop == null) {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
@@ -55,11 +55,13 @@ public class ShopServiceImpl implements ShopService {
             if (effectedNum <= 0) {
                 throw new ShopOperationException("店铺创建失败");
             } else {
-                // 商品图片非空
-                if (shopImg != null) {
-                    // 存储图片
-                    addShopImg(shop, shopImg);
-
+                // 判断是否需要处理图片
+                if (shopImgInputStream != null && StringUtils.isNotEmpty(fileName)) {
+                    File imgFile = new File(fileName);
+                    // 将图片流转换成文件
+                    inputStreamToFile(shopImgInputStream, imgFile);
+                    // 添加店铺图片
+                    addShopImg(shop, imgFile);
                     // 更新店铺的地址图片
                     effectedNum = shopDao.updateShop(shop);
                     if (effectedNum <= 0) {
@@ -67,14 +69,12 @@ public class ShopServiceImpl implements ShopService {
                     }
                 }
             }
-
         } catch (Exception e) {
             throw new ShopOperationException("addShop error:" + e.getMessage());
         }
         // 返回店铺传输类，状态：审核中，带店铺信息
         return new ShopExecution(ShopStateEnum.CHECK, shop);
     }
-
 
     @Override
     public ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException {

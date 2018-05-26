@@ -15,6 +15,7 @@ import com.lin.utils.CodeUtil;
 import com.lin.utils.HttpServletRequestUtil;
 import com.lin.utils.ImageUtil;
 import com.lin.utils.PathUtil;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +134,7 @@ public class ShopManagementController {
         // 获取请求中的参数
         String shopStr = HttpServletRequestUtil.getString(request, "shopStr");
         ObjectMapper mapper = new ObjectMapper();
-        Shop shop = null;
+        Shop shop;
 
         try {
             // 将json字符串转换成店铺对象
@@ -143,7 +145,7 @@ public class ShopManagementController {
             return modelMap;
         }
         // 店铺图片文件流
-        CommonsMultipartFile shopImg = null;
+        CommonsMultipartFile shopImg;
         // 文件流解析器
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
                 request.getSession().getServletContext());
@@ -162,41 +164,37 @@ public class ShopManagementController {
         // 2.注册店铺
         // 店铺对象和店铺图片非空
         if (shop != null && shopImg != null) {
-            PersonInfo owner = new PersonInfo();
-            owner.setUserId(1L);
+            // 从session中获取用户信息
+            PersonInfo owner = (PersonInfo) request.getSession().getAttribute("user");
+            // 设置店铺的所有者
             shop.setOwner(owner);
-            // 店铺图片目标文件地址
-            File shopImgFile = new File(PathUtil.getImgBasePath() + ImageUtil.getRandomFileName() + ".jpg");
-            try {
-                // 创建新文件
-                shopImgFile.createNewFile();
-            } catch (IOException e) {
-                modelMap.put("success", false);
-                modelMap.put("errMsg", e.getMessage());
-                return modelMap;
-            }
+            // 店铺传输对象
+            ShopExecution se;
 
             try {
-                // 将输入流转换成文件
-                inputStreamToFile(shopImg.getInputStream(), shopImgFile);
-            } catch (IOException e) {
+                // 添加店铺到数据库
+                se = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                // 审核状态
+                if (se.getState() == ShopStateEnum.CHECK.getState()) {
+                    modelMap.put("success", true);
+                    // 从session中获取店铺列表
+                    @SuppressWarnings("unchecked")
+                    List<Shop> shopList = (List<Shop>) request.getSession().getAttribute("shopList");
+                    if (shopList == null || shopList.size() == 0) {
+                        shopList = new ArrayList<>();
+                    }
+                    // 将店铺传输对象添加到店铺列表中
+                    shopList.add(se.getShop());
+                    // 将店铺列表存如session中
+                    request.getSession().setAttribute("shopList", shopList);
+                } else {
+                    modelMap.put("success", false);
+                    modelMap.put("errMsg", se.getStateInfo());
+                }
+            } catch (ShopOperationException | IOException e) {
                 modelMap.put("success", false);
                 modelMap.put("errMsg", e.getMessage());
-                return modelMap;
             }
-
-            // 注册店铺到数据库
-            ShopExecution shopExecution = shopService.addShop(shop, shopImgFile);
-
-            // 店铺传输对象的状态为审核中（成功）
-            if (shopExecution.getState() == ShopStateEnum.CHECK.getState()) {
-                modelMap.put("success", true);
-            } else {
-                modelMap.put("success", false);
-                modelMap.put("errMsg", shopExecution.getStateInfo());
-            }
-
-            // 3.返回结果
             return modelMap;
         } else {
             modelMap.put("success", false);
@@ -250,9 +248,6 @@ public class ShopManagementController {
         // 2.修改店铺信息
         // 店铺对象和店铺id非空
         if (shop != null && shop.getShopId() != null) {
-            PersonInfo owner = new PersonInfo();
-            owner.setUserId(1L);
-            shop.setOwner(owner);
             ShopExecution se;
 
             try {

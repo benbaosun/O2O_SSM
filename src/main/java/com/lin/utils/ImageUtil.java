@@ -107,6 +107,27 @@ public class ImageUtil {
         return randomNum + nowTimeStr;
     }
 
+    /**
+     * 删除单个文件，或删除目录下的所有文件
+     * @param storePath 文件路径或文件夹路径
+     */
+    public static void deleteFileOrPath(String storePath) {
+        // 文件或者文件夹路径
+        File fileOrPath = new File(PathUtil.getImgBasePath() + storePath);
+
+        if (fileOrPath.exists()) {
+            if (fileOrPath.isDirectory()) {
+                File[] files = fileOrPath.listFiles();
+                // 删除目录下的所有文件
+                for (int i = 0; i < fileOrPath.length(); i++) {
+                    files[i].delete();
+                }
+            }
+            // 删除当前目录或文件
+            fileOrPath.delete();
+        }
+    }
+
     public static void main(String[] args) throws IOException {
 
         System.out.println(basePath);
@@ -118,6 +139,5 @@ public class ImageUtil {
                         ImageIO.read(new File(basePath + "/watermark.jpg")), 0.25f)
                 .outputQuality(0.8f)
                 .toFile("G:\\android素材\\波浪图33.jpg");
-
     }
 }

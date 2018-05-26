@@ -9,12 +9,16 @@ import com.lin.exceptions.ShopOperationException;
 import com.lin.service.ShopService;
 import com.lin.utils.FileUtil;
 import com.lin.utils.ImageUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 /**
@@ -71,6 +75,47 @@ public class ShopServiceImpl implements ShopService {
         return new ShopExecution(ShopStateEnum.CHECK, shop);
     }
 
+
+    @Override
+    public ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException {
+        if (shop == null || shop.getShopId() == null) {
+            return new ShopExecution(ShopStateEnum.NULL_SHOP);
+        } else {
+            try {
+                // 1.判断是否需要处理图片
+                if (shopImgInputStream != null && StringUtils.isNotEmpty(fileName)) {
+                    // 根据id获取店铺
+                    Shop tempShop = shopDao.queryByShopId(shop.getShopId());
+                    if (tempShop.getShopId() != null) {
+                        // 删除店铺原有的图片
+                        ImageUtil.deleteFileOrPath(tempShop.getShopImg());
+                    }
+                    File imgFile = new File(fileName);
+                    // 将图片流转换成文件
+                    inputStreamToFile(shopImgInputStream, imgFile);
+                    // 添加店铺图片
+                    addShopImg(shop, imgFile);
+                }
+                // 2.更新店铺信息
+                shop.setLastEditTime(new Date());
+                int effectedNum = shopDao.updateShop(shop);
+                if (effectedNum <= 0) {
+                    return new ShopExecution(ShopStateEnum.INNER_ERROR);
+                } else {
+                    shop = shopDao.queryByShopId(shop.getShopId());
+                    return new ShopExecution(ShopStateEnum.SUCCESS, shop);
+                }
+            } catch (Exception e) {
+                throw new ShopOperationException("modifyShop error:" + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public Shop getByShopId(long shopId) {
+        return shopDao.queryByShopId(shopId);
+    }
+
     /**
      * 添加店铺图片
      * @param shop 店铺对象
@@ -83,6 +128,26 @@ public class ShopServiceImpl implements ShopService {
         String shopImgAddr = ImageUtil.generateThumbnail(shopImg, dest);
         // 设置店铺图片
         shop.setShopImg(shopImgAddr);
+    }
+
+    /**
+     * 将输入流装换成文件
+     * @param ins 输入流
+     * @param file 文件
+     */
+    private static void inputStreamToFile(InputStream ins, File file) {
+        try {
+            OutputStream os = new FileOutputStream(file);
+            int bytesRead = 0;
+            byte[] buffer = new byte[8192];
+            while ((bytesRead = ins.read(buffer, 0, buffer.length)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            os.close();
+            ins.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

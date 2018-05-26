@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -25,6 +28,17 @@ public class ShopServiceTest extends BaseTest {
 
     @Autowired
     private ShopService shopService;
+
+    @Test
+    public void testModifyShop() throws FileNotFoundException {
+        Shop shop = new Shop();
+        shop.setShopId(1L);
+        shop.setShopName("修改后的店铺名称");
+        File shopImg = new File("G:\\android素材\\spygame素材\\layout背景\\gosick1.jpg");
+        InputStream is = new FileInputStream(shopImg);
+        ShopExecution shopExecution = shopService.modifyShop(shop, is, "ever.jpg");
+        System.out.println("新的图片地址:" + shopExecution.getShop().getShopImg());
+    }
 
     @Test
     public void testAddShop() {

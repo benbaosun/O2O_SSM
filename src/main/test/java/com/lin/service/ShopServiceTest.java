@@ -61,10 +61,15 @@ public class ShopServiceTest extends BaseTest {
         shop.setAdvice("审核中");
 
         File shopImg = new File("G:\\android素材\\波浪图.jpg");
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(shopImg);
+            ShopExecution shopExecution = shopService.addShop(shop, fileInputStream, shopImg.getName());
 
-        ShopExecution shopExecution = shopService.addShop(shop, shopImg);
-
-        assertEquals(ShopStateEnum.CHECK.getState(), shopExecution.getState());
+            assertEquals(ShopStateEnum.CHECK.getState(), shopExecution.getState());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }

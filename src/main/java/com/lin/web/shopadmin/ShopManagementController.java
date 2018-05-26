@@ -7,6 +7,7 @@ import com.lin.entity.PersonInfo;
 import com.lin.entity.Shop;
 import com.lin.entity.ShopCategory;
 import com.lin.enums.ShopStateEnum;
+import com.lin.exceptions.ShopOperationException;
 import com.lin.service.AreaService;
 import com.lin.service.ShopCategoryService;
 import com.lin.service.ShopService;
@@ -52,6 +53,11 @@ public class ShopManagementController {
     @Autowired
     private AreaService areaService;
 
+    /**
+     * 根据id获取店铺信息
+     * @param request 请求
+     * @return 店铺信息
+     */
     @RequestMapping(value = "/getshopbyid", method = RequestMethod.GET)
     @ResponseBody
     private Map<String, Object> getShopById(HttpServletRequest request) {
@@ -78,6 +84,10 @@ public class ShopManagementController {
         return madelMap;
     }
 
+    /**
+     * 获取店铺初始化信息
+     * @return 店铺初始化信息
+     */
     @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
     @ResponseBody
     private Map<String, Object> getShopInitInfo() {
@@ -196,13 +206,88 @@ public class ShopManagementController {
     }
 
     /**
+     * 修改店铺
+     * @param request 用户请求
+     * @return 响应结果
+     */
+    @RequestMapping(value = "/modifyshop", method = RequestMethod.POST)
+    @ResponseBody
+    private Map<String, Object> modifyShop(HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<>(5);
+        // 验证码检查
+        if (!CodeUtil.checkVerifyCode(request)) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "输入了错误的验证码");
+            return modelMap;
+        }
+        // 1.接收并转换响应的参数，包括店铺以及图片信息
+        // 获取请求中的参数
+        String shopStr = HttpServletRequestUtil.getString(request, "shopStr");
+        ObjectMapper mapper = new ObjectMapper();
+        Shop shop = null;
+
+        try {
+            // 将json字符串转换成店铺对象
+            shop = mapper.readValue(shopStr, Shop.class);
+        } catch (IOException e) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
+            return modelMap;
+        }
+        // 店铺图片文件流
+        CommonsMultipartFile shopImg = null;
+        // 文件流解析器
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
+                request.getSession().getServletContext());
+
+        // 请求中包含文件
+        if (multipartResolver.isMultipart(request)) {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            // 获取页面上传的图片
+            shopImg = (CommonsMultipartFile) multipartRequest.getFile("shopImg");
+        }
+
+        // 2.修改店铺信息
+        // 店铺对象和店铺id非空
+        if (shop != null && shop.getShopId() != null) {
+            PersonInfo owner = new PersonInfo();
+            owner.setUserId(1L);
+            shop.setOwner(owner);
+            ShopExecution se;
+
+            try {
+                // 根据是否传入店铺图片执行修改操作
+                if (shopImg == null) {
+                    se = shopService.modifyShop(shop, null, null);
+                } else {
+                    se = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                }
+
+                if (se.getState() == ShopStateEnum.SUCCESS.getState()) {
+                    modelMap.put("success", true);
+                } else {
+                    modelMap.put("success", false);
+                    modelMap.put("errMsg", se.getStateInfo());
+                }
+            } catch (ShopOperationException | IOException e) {
+                modelMap.put("success", false);
+                modelMap.put("errMsg", e.getMessage());
+             }
+            return modelMap;
+        } else {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "请输入店铺id");
+            return modelMap;
+        }
+    }
+
+    /**
      * 将输入流转换成文件
      * @param ins 输入流
      * @param file 目标文件对象
      */
     private static void inputStreamToFile(InputStream ins, File file) {
         try(FileOutputStream os = new FileOutputStream(file)) {
-
             int byteRead = 0;
             byte[] buffer = new byte[1024];
             while ((byteRead = ins.read(buffer)) != -1) {

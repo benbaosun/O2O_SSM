@@ -9,6 +9,14 @@ import com.lin.entity.Shop;
  */
 
 public interface ShopDao {
+
+    /**
+     * 根据店铺id获取店铺信息
+     * @param shopId 店铺id
+     * @return 店铺对象
+     */
+    Shop queryByShopId(long shopId);
+
     /**
      * 新增店铺
      * @param shop 店铺对象

@@ -23,6 +23,15 @@ public class ShopDaoTest extends BaseTest {
     @Autowired
     private ShopDao shopDao;
 
+    @Test
+    public void testQueryByShopId() {
+        long shopId = 1L;
+        Shop shop = shopDao.queryByShopId(shopId);
+
+        System.out.println("areaId:" + shop.getArea().getAreaId());
+        System.out.println("areaName:" + shop.getArea().getAreaName());
+    }
+
     /**
      * 测试插入店铺对象
      */

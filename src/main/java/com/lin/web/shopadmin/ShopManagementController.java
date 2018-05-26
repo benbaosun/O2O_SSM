@@ -52,10 +52,36 @@ public class ShopManagementController {
     @Autowired
     private AreaService areaService;
 
+    @RequestMapping(value = "/getshopbyid", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getShopById(HttpServletRequest request) {
+        Map<String, Object> madelMap = new HashMap<>(5);
+        // 获取请求参数中的店铺id
+        long shopId = HttpServletRequestUtil.getLong(request, "shopId");
+        if (shopId > -1) {
+            try {
+                // 根据id获取店铺对象
+                Shop shop = shopService.getByShopId(shopId);
+                // 获取所有地区信息
+                List<Area> areaList = areaService.getAreaList();
+                madelMap.put("shop", shop);
+                madelMap.put("areaList", areaList);
+                madelMap.put("success", true);
+            } catch (Exception e) {
+                madelMap.put("success", false);
+                madelMap.put("errMsg", e.toString());
+            }
+        } else {
+            madelMap.put("success", false);
+            madelMap.put("errMsg", "empty shopId");
+        }
+        return madelMap;
+    }
+
     @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
     @ResponseBody
     private Map<String, Object> getShopInitInfo() {
-        Map<String, Object> modelMap = new HashMap<>();
+        Map<String, Object> modelMap = new HashMap<>(5);
         // 店铺分类列表
         List<ShopCategory> shopCategoryList;
         // 区域分类列表

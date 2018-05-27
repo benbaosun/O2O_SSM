@@ -41,4 +41,13 @@ public class ShopAdminController {
         return "shop/shopmanage";
     }
 
+    /**
+     * 进行店铺管理路径映射
+     * @return 映射后的网址
+     */
+    @RequestMapping(value = "/productcategorymanage")
+    public String productCategoryManage() {
+        return "shop/productcategorymanage";
+    }
+
 }

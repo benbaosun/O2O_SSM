@@ -56,7 +56,40 @@ public class ShopManagementController {
     private AreaService areaService;
 
     /**
-     * 根据请求参数获取符合要求的店铺信息
+     * 获取店铺管理信息（用于验证用户登陆权限）
+     * @param request 请求
+     * @return 登陆信息
+     */
+    @RequestMapping(value = "/getshopmanagementinfo", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getShopManagementInfo(HttpServletRequest request) {
+        Map<String, Object> madelMap = new HashMap<>(5);
+        // 从请求中获取店铺id
+        long shopId = (int) HttpServletRequestUtil.getLong(request, "shopId");
+        if (shopId <= 0) {
+            // 从session中获取店铺对象
+            Object currentShopObj = request.getSession().getAttribute("currentShop");
+            // 店铺对象为空
+            if (currentShopObj == null) {
+                madelMap.put("redirect", true);
+                madelMap.put("url", "/o2o/shop/shoplist");
+            } else {
+                Shop currentShop = (Shop) currentShopObj;
+                madelMap.put("redirect", false);
+                madelMap.put("shopId", currentShop.getShopId());
+            }
+        } else {
+            Shop currentShop = new Shop();
+            currentShop.setShopId(shopId);
+            // 将店铺对象存到session
+            request.getSession().setAttribute("currentShop", currentShop);
+            madelMap.put("redirect", false);
+        }
+        return madelMap;
+    }
+
+    /**
+     * 根据用户信息返回该用户创建的店铺信息列表
      * @param request 请求
      * @return 店铺信息
      */

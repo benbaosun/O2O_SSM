@@ -15,7 +15,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ShopAdminController {
 
     /**
-     * 进行店铺路径映射
+     * 进行店铺列表显示路径映射
+     * @return 映射后的网址
+     */
+    @RequestMapping(value = "/shoplist")
+    public String shopList() {
+        return "shop/shoplist";
+    }
+
+    /**
+     * 进行店铺操作路径映射
      * @return 映射后的网址
      */
     @RequestMapping(value = "/shopoperation")

@@ -9,6 +9,7 @@ import com.lin.exceptions.ShopOperationException;
 import com.lin.service.ShopService;
 import com.lin.utils.FileUtil;
 import com.lin.utils.ImageUtil;
+import com.lin.utils.PageCalculator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author lkmc2
@@ -32,6 +34,25 @@ public class ShopServiceImpl implements ShopService {
 
     @Autowired
     private ShopDao shopDao;
+
+    @Override
+    public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
+        // 获取数据开始行数（分页）
+        int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
+        // 获取符合查询条件的店铺列表
+        List<Shop> shopList = shopDao.queryShopList(shopCondition, pageIndex, pageSize);
+        // 获取符合查询条件的总店铺数
+        int shopCount = shopDao.queryShopCount(shopCondition);
+        // 店铺传输对象
+        ShopExecution se = new ShopExecution();
+        if (shopList != null) {
+            se.setShopList(shopList);
+            se.setCount(shopCount);
+        } else {
+            se.setState(ShopStateEnum.INNER_ERROR.getState());
+        }
+        return se;
+    }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)

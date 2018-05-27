@@ -19,7 +19,7 @@ public class ShopExecution {
     private String stateInfo;
 
     /*** 店铺数量 ***/
-    private String count;
+    private int count;
 
     /*** 操作的店铺对象（增删改查的时候用到） ***/
     private Shop shop;
@@ -75,11 +75,11 @@ public class ShopExecution {
         this.stateInfo = stateInfo;
     }
 
-    public String getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         this.count = count;
     }
 

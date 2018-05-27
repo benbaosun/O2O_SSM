@@ -40,7 +40,7 @@ public class ShopServiceImpl implements ShopService {
         // 获取数据开始行数（分页）
         int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
         // 获取符合查询条件的店铺列表
-        List<Shop> shopList = shopDao.queryShopList(shopCondition, pageIndex, pageSize);
+        List<Shop> shopList = shopDao.queryShopList(shopCondition, rowIndex, pageSize);
         // 获取符合查询条件的总店铺数
         int shopCount = shopDao.queryShopCount(shopCondition);
         // 店铺传输对象

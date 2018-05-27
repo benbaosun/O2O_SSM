@@ -56,6 +56,37 @@ public class ShopManagementController {
     private AreaService areaService;
 
     /**
+     * 根据请求参数获取符合要求的店铺信息
+     * @param request 请求
+     * @return 店铺信息
+     */
+    @RequestMapping(value = "/getshoplist", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getShopList(HttpServletRequest request) {
+        Map<String, Object> madelMap = new HashMap<>(5);
+
+        PersonInfo user = new PersonInfo();
+        user.setUserId(1L);
+        user.setName("Test");
+        request.getSession().setAttribute("user", user);
+        // 获取session中的用户信息
+        user = (PersonInfo) request.getSession().getAttribute("user");
+
+        try {
+            Shop shopCondition = new Shop();
+            shopCondition.setOwner(user);
+            ShopExecution se = shopService.getShopList(shopCondition, 0, 100);
+            madelMap.put("shopList", se.getShopList());
+            madelMap.put("user", user);
+            madelMap.put("success", true);
+        } catch (Exception e) {
+            madelMap.put("success", false);
+            madelMap.put("errMsg", e.getMessage());
+        }
+        return madelMap;
+    }
+
+    /**
      * 根据id获取店铺信息
      * @param request 请求
      * @return 店铺信息
@@ -77,7 +108,7 @@ public class ShopManagementController {
                 madelMap.put("success", true);
             } catch (Exception e) {
                 madelMap.put("success", false);
-                madelMap.put("errMsg", e.toString());
+                madelMap.put("errMsg", e.getMessage());
             }
         } else {
             madelMap.put("success", false);

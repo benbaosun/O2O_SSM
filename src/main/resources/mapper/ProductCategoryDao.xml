@@ -12,5 +12,7 @@
         shop_id
         FROM tb_product_category
         WHERE shop_id = #{shopId}
+        ORDER BY
+        priority DESC
     </select>
 </mapper>

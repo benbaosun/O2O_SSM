@@ -1,7 +1,6 @@
 package com.lin.service;
 
 import com.lin.BaseTest;
-import com.lin.dao.ProductCategoryDao;
 import com.lin.entity.ProductCategory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class ProductCategoryServiceTest extends BaseTest {
     @Test
     public void testQueryProductCategoryList() {
         long shopId = 1;
-        List<ProductCategory> productCategories = productCategoryService.queryProductCategoryList(shopId);
+        List<ProductCategory> productCategories = productCategoryService.getProductCategoryList(shopId);
         System.out.println("该店铺自定义类别数为：" + productCategories.size());
     }
 

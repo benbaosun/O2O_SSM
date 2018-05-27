@@ -72,7 +72,7 @@ public class ShopManagementController {
             // 店铺对象为空
             if (currentShopObj == null) {
                 madelMap.put("redirect", true);
-                madelMap.put("url", "/o2o/shop/shoplist");
+                madelMap.put("url", "/o2o_ssm/shopadmin/shoplist");
             } else {
                 Shop currentShop = (Shop) currentShopObj;
                 madelMap.put("redirect", false);

@@ -57,9 +57,9 @@ public class ShopServiceTest extends BaseTest {
         PersonInfo owner = new PersonInfo();
         Area area = new Area();
         ShopCategory shopCategory = new ShopCategory();
-        owner.setUserId(1L);
-        area.setAreaId(2);
-        shopCategory.setShopCategoryId(1L);
+        owner.setUserId(8L);
+        area.setAreaId(3);
+        shopCategory.setShopCategoryId(10L);
         shop.setOwner(owner);
         shop.setArea(area);
         shop.setShopCategory(shopCategory);
@@ -71,7 +71,7 @@ public class ShopServiceTest extends BaseTest {
         shop.setEnableStatus(ShopStateEnum.CHECK.getState());
         shop.setAdvice("审核中");
 
-        File shopImg = new File("G:\\android素材\\波浪图.jpg");
+        File shopImg = new File("F:\\android素材\\波浪图.jpg");
         FileInputStream fileInputStream;
         try {
             fileInputStream = new FileInputStream(shopImg);

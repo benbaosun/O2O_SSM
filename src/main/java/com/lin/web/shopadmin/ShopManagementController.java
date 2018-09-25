@@ -229,9 +229,9 @@ public class ShopManagementController {
         // 店铺对象和店铺图片非空
         if (shop != null && shopImg != null) {
             // 从session中获取用户信息
-//            PersonInfo owner = (PersonInfo) request.getSession().getAttribute("user");
-            PersonInfo owner = new PersonInfo();
-            owner.setUserId(8L);
+            PersonInfo owner = (PersonInfo) request.getSession().getAttribute("user");
+//            PersonInfo owner = new PersonInfo();
+//            owner.setUserId(8L);
             // 设置店铺的所有者
             shop.setOwner(owner);
             // 店铺传输对象

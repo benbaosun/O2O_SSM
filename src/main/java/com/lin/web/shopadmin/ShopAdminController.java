@@ -1,8 +1,11 @@
 package com.lin.web.shopadmin;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * @author lkmc2
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * 店铺管理员控制器
  */
 
+@ApiIgnore
 @Controller
 @RequestMapping(value = "shopadmin", method = {RequestMethod.GET})
 public class ShopAdminController {

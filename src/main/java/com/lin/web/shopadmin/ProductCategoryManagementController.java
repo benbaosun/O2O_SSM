@@ -4,6 +4,10 @@ import com.lin.dto.Result;
 import com.lin.entity.*;
 import com.lin.enums.ProductCategoryStateEnum;
 import com.lin.service.ProductCategoryService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +23,7 @@ import java.util.List;
  * 店铺管理控制器
  */
 
+@Api(value = "店铺管理Controller", tags = {"店铺管理控制器"})
 @Controller
 @RequestMapping("/shopadmin")
 public class ProductCategoryManagementController {
@@ -31,9 +36,11 @@ public class ProductCategoryManagementController {
      * @param request 请求
      * @return 产品分类信息
      */
+    @ApiOperation(value = "获取产品分类列表", tags = "获取产品分类列表")
     @RequestMapping(value = "/getproductcategorylist", method = RequestMethod.GET)
     @ResponseBody
-    private Result<List<ProductCategory>> getProductCategoryList(HttpServletRequest request) {
+    private Result<List<ProductCategory>> getProductCategoryList(
+            @ApiParam(name = "request", value = "请求", required = true) HttpServletRequest request) {
 //        Shop shop = new Shop();
 //        shop.setShopId(1L);
 //        // 将店铺信息存入session
@@ -54,4 +61,5 @@ public class ProductCategoryManagementController {
         ProductCategoryStateEnum ps = ProductCategoryStateEnum.INNER_ERROR;
         return new Result<>(false, ps.getState(), ps.getStateInfo());
     }
+
 }

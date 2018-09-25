@@ -15,6 +15,9 @@ import com.lin.utils.CodeUtil;
 import com.lin.utils.HttpServletRequestUtil;
 import com.lin.utils.ImageUtil;
 import com.lin.utils.PathUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,6 +45,7 @@ import java.util.Map;
  * 店铺管理控制器
  */
 
+@Api(value = "店铺管理Controller", tags = {"店铺管理控制器"})
 @Controller
 @RequestMapping("/shopadmin")
 public class ShopManagementController {
@@ -60,9 +64,11 @@ public class ShopManagementController {
      * @param request 请求
      * @return 登陆信息
      */
+    @ApiOperation(value = "获取店铺管理信息", tags = {"获取店铺管理信息"}, notes = "用于验证用户登陆权限")
     @RequestMapping(value = "/getshopmanagementinfo", method = RequestMethod.GET)
     @ResponseBody
-    private Map<String, Object> getShopManagementInfo(HttpServletRequest request) {
+    private Map<String, Object> getShopManagementInfo(
+            @ApiParam(name = "request", value = "请求", required = true) HttpServletRequest request) {
         Map<String, Object> madelMap = new HashMap<>(5);
         // 从请求中获取店铺id
         long shopId = (int) HttpServletRequestUtil.getLong(request, "shopId");
@@ -93,9 +99,11 @@ public class ShopManagementController {
      * @param request 请求
      * @return 店铺信息
      */
+    @ApiOperation(value = "根据用户信息返回该用户创建的店铺信息列表", tags = {"根据用户信息返回该用户创建的店铺信息列表"})
     @RequestMapping(value = "/getshoplist", method = RequestMethod.GET)
     @ResponseBody
-    private Map<String, Object> getShopList(HttpServletRequest request) {
+    private Map<String, Object> getShopList(
+            @ApiParam(name = "request", value = "请求", required = true) HttpServletRequest request) {
         Map<String, Object> madelMap = new HashMap<>(5);
 
         PersonInfo user = new PersonInfo();
@@ -124,9 +132,11 @@ public class ShopManagementController {
      * @param request 请求
      * @return 店铺信息
      */
+    @ApiOperation(value = "根据id获取店铺信息", tags = {"根据id获取店铺信息"})
     @RequestMapping(value = "/getshopbyid", method = RequestMethod.GET)
     @ResponseBody
-    private Map<String, Object> getShopById(HttpServletRequest request) {
+    private Map<String, Object> getShopById(
+            @ApiParam(name = "request", value = "请求", required = true) HttpServletRequest request) {
         Map<String, Object> madelMap = new HashMap<>(5);
         // 获取请求参数中的店铺id
         long shopId = HttpServletRequestUtil.getLong(request, "shopId");
@@ -154,6 +164,7 @@ public class ShopManagementController {
      * 获取店铺初始化信息
      * @return 店铺初始化信息
      */
+    @ApiOperation(value = "获取店铺初始化信息", tags = {"获取店铺初始化信息"})
     @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
     @ResponseBody
     private Map<String, Object> getShopInitInfo() {
@@ -184,9 +195,11 @@ public class ShopManagementController {
      * @param request 用户请求
      * @return 响应结果
      */
+    @ApiOperation(value = "注册店铺", tags = {"注册店铺"})
     @RequestMapping(value = "/registershop", method = RequestMethod.POST)
     @ResponseBody
-    private Map<String, Object> registerShop(HttpServletRequest request) {
+    private Map<String, Object> registerShop(
+            @ApiParam(name = "request", value = "请求", required = true) HttpServletRequest request) {
         Map<String, Object> modelMap = new HashMap<>(5);
         // 验证码检查
         if (!CodeUtil.checkVerifyCode(request)) {
@@ -270,13 +283,15 @@ public class ShopManagementController {
     }
 
     /**
-     * 修改店铺
+     * 修改店铺信息
      * @param request 用户请求
      * @return 响应结果
      */
+    @ApiOperation(value = "修改店铺信息", tags = {"修改店铺信息"})
     @RequestMapping(value = "/modifyshop", method = RequestMethod.POST)
     @ResponseBody
-    private Map<String, Object> modifyShop(HttpServletRequest request) {
+    private Map<String, Object> modifyShop(
+            @ApiParam(name = "request", value = "请求", required = true) HttpServletRequest request) {
         Map<String, Object> modelMap = new HashMap<>(5);
         // 验证码检查
         if (!CodeUtil.checkVerifyCode(request)) {

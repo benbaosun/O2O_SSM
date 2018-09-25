@@ -3,6 +3,8 @@ package com.lin.web.superadmin;
 
 import com.lin.entity.Area;
 import com.lin.service.AreaService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.Map;
  * 区域控制器
  */
 
+@Api(value = "区域Controller", tags = {"区域接口操作"})
 @Controller
 @RequestMapping("/superadmin") //路径映射
 public class AreaController {
@@ -35,6 +38,7 @@ public class AreaController {
      * 列出所有区域对象
      * @return 区域对象列表
      */
+    @ApiOperation(value = "获取所有区域信息", tags = {"获取区域信息"}, notes = "仅限广西范围内")
     @RequestMapping(value = "/listarea", method = RequestMethod.GET)
     @ResponseBody // 将结果转换成json
     private Map<String, Object> listArea() {
